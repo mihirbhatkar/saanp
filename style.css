@@ -1,0 +1,28 @@
+body{
+    margin: 0;
+    padding: 0;
+    display: grid;
+    place-content: center;
+    min-height: 100vh;
+
+    font-family: monospace;
+}
+
+.container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 5rem;
+    background-color: azure;
+    padding: 1rem;
+}
+
+.container > p{
+    padding: 1rem;
+    font-size: 2em;
+}
+
+.selected{
+    border: 1px black solid;
+    border-radius: 12px;
+}
