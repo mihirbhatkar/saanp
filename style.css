@@ -10,15 +10,14 @@ body{
 
 .container{
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 5rem;
-    background-color: azure;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 1rem;
     padding: 1rem;
 }
 
 .container > p{
-    padding: 1rem;
+    padding: 24px;
     font-size: 2em;
 }
 
