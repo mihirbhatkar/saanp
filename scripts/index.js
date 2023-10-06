@@ -1,12 +1,13 @@
-const side = 4;
+const side = 8;
 
 let snake = {
 	points: [
 		{ x: 0, y: 0 }, // first element will be tail
 		{ x: 1, y: 0 },
-		{ x: 2, y: 0 }, // last element will be head
+		{ x: 2, y: 0 },
+		{ x: 3, y: 0 }, // last element will be head
 	],
-	length: 3,
+	length: 4,
 	direction: "right",
 };
 
@@ -34,34 +35,54 @@ const newPoints = (points, direction) => {
 	return newPoints;
 };
 
+const checkIfOppositeDirectionInput = (direction) => {
+	switch (direction) {
+		case "ArrowRight":
+			return snake.direction === "left";
+		case "ArrowLeft":
+			return snake.direction === "right";
+		case "ArrowUp":
+			return snake.direction === "down";
+		case "ArrowDown":
+			return snake.direction === "up";
+	}
+};
+
 const checkKey = (e) => {
-	const currentSnake = JSON.parse(JSON.stringify(snake));
+	const currentSnake = structuredClone(snake);
 	const pointsOld = currentSnake.points;
 
 	let nextSnake = "";
+
+	if (checkIfOppositeDirectionInput(e.key)) return undefined;
+
 	switch (e.key) {
 		case "ArrowRight":
 			nextSnake = {
 				...currentSnake,
 				points: newPoints(pointsOld, "right"),
+				direction: "right",
 			};
 			break;
 		case "ArrowLeft":
 			nextSnake = {
 				...currentSnake,
 				points: newPoints(pointsOld, "left"),
+				direction: "left",
 			};
 			break;
 		case "ArrowUp":
 			nextSnake = {
 				...currentSnake,
 				points: newPoints(pointsOld, "up"),
+				direction: "up",
 			};
 			break;
 		case "ArrowDown":
 			nextSnake = {
 				...currentSnake,
 				points: newPoints(pointsOld, "down"),
+				direction: "down",
 			};
 			break;
 		default:
@@ -74,7 +95,6 @@ const checkKey = (e) => {
 
 const checkIfStepExists = (nextSnake) => {
 	const head = nextSnake.points.slice(-1)[0];
-	console.log(head.x, head.y);
 	return !(
 		head.x < 0 ||
 		head.y < 0 ||
@@ -91,14 +111,20 @@ const drawSnake = (newSnake) => {
 	for (const item of newSnake.points)
 		newSelectedIds.push(`${item.x} ${item.y}`);
 
-	for (const id of newSelectedIds)
-		document.getElementById(id).setAttribute("class", "selected");
+	for (let i = 0; i < newSelectedIds.length; i++)
+		document
+			.getElementById(newSelectedIds[i])
+			.setAttribute(
+				"class",
+				`selected ${i === newSelectedIds.length - 1 ? "head" : ""}`
+			);
 };
 
 const walk = (e) => {
 	const newSnake = checkKey(e);
 	if (!newSnake) return; // don't do anything if other keys are pressed
-	drawSnake(newSnake);
+	snake = newSnake;
+	drawSnake(snake);
 };
 
 window.addEventListener("keydown", walk);
