@@ -5,9 +5,8 @@ let snake = {
         { x: 0, y: 0 }, // first element will be tail
         { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 3, y: 0 }, // last element will be head
     ],
-    length: 4,
+    length: 3,
     direction: "right",
 };
 
@@ -138,11 +137,48 @@ const drawSnake = (newSnake) => {
             );
 };
 
-const walk = (e) => {
-    const newSnake = checkKey(e);
-    if (!newSnake) return; // don't do anything if other keys are pressed
-    snake = newSnake;
-    drawSnake(snake);
+const changeDirection = (e) => {
+
+    if (checkIfOppositeDirectionInput(e.key)) return undefined;
+    switch (e.key) {
+        case "ArrowRight":
+            snake.direction = "right";
+            break;
+        case "ArrowLeft":
+            snake.direction = "left";
+            break;
+        case "ArrowUp":
+            snake.direction = "up";
+            break;
+        case "ArrowDown":
+            snake.direction = "down";
+            break;
+    }
 };
 
-window.addEventListener("keydown", walk);
+
+const autoWalk = () => {
+
+    let key = "";
+    switch (snake.direction) {
+        case "right":
+            key = "ArrowRight";
+            break;
+        case "left":
+            key = "ArrowLeft";
+            break;
+        case "down":
+            key = "ArrowDown";
+            break;
+        case "up":
+            key = "ArrowUp";
+            break;
+    }
+    const newSnake = checkKey({ key: key });
+    if (!newSnake) return;
+    snake = newSnake;
+    drawSnake(snake);
+}
+
+window.addEventListener("keydown", changeDirection);
+setInterval(autoWalk, 1000);
