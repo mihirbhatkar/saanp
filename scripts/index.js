@@ -49,13 +49,11 @@ const checkIfOppositeDirectionInput = (direction) => {
 };
 
 const checkKey = (e) => {
-	const currentSnake = structuredClone(snake);
-	const pointsOld = currentSnake.points;
-
-	let nextSnake = "";
-
 	if (checkIfOppositeDirectionInput(e.key)) return undefined;
 
+	const currentSnake = structuredClone(snake);
+	const pointsOld = currentSnake.points;
+	let nextSnake = "";
 	switch (e.key) {
 		case "ArrowRight":
 			nextSnake = {
