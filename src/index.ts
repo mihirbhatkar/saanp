@@ -1,3 +1,4 @@
+import "./style.css";
 import { drawInitialMap } from "./modules/mapGenerator";
 
 export const side = 12;
