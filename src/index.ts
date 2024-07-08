@@ -1,17 +1,20 @@
-const side = 8;
+import { drawInitialMap } from "./modules/mapGenerator";
 
-let snake = {
-	points: [
-		{ x: 0, y: 0 }, // first element will be tail
-		{ x: 1, y: 0 },
-		{ x: 2, y: 0 },
-		{ x: 3, y: 0 }, // last element will be head
-	],
-	length: 4,
-	direction: "right",
+export const side = 12;
+
+export const startPoints: SnakePoints = [
+	{ x: 0, y: 0 },
+	{ x: 1, y: 0 },
+	{ x: 2, y: 0, head: true },
+]; // array points are going to be continous and in a straight horizontal line.
+
+let snake: Snake = {
+	points: startPoints,
+	length: 3,
+	direction: "down",
 };
 
-const newPoints = (points, direction) => {
+const newPoints = (points: any, direction: any) => {
 	const newPoints = structuredClone(points);
 	let newHead = newPoints.slice(-1)[0];
 
@@ -35,7 +38,7 @@ const newPoints = (points, direction) => {
 	return newPoints;
 };
 
-const checkIfOppositeDirectionInput = (direction) => {
+const checkIfOppositeDirectionInput = (direction: string) => {
 	switch (direction) {
 		case "ArrowRight":
 			return snake.direction === "left";
@@ -48,13 +51,13 @@ const checkIfOppositeDirectionInput = (direction) => {
 	}
 };
 
-const checkKey = (e) => {
-	if (checkIfOppositeDirectionInput(e.key)) return undefined;
+const checkKey = (key: string) => {
+	if (checkIfOppositeDirectionInput(key)) return undefined;
 
 	const currentSnake = structuredClone(snake);
 	const pointsOld = currentSnake.points;
-	let nextSnake = "";
-	switch (e.key) {
+	let nextSnake;
+	switch (key) {
 		case "ArrowRight":
 			nextSnake = {
 				...currentSnake,
@@ -91,7 +94,7 @@ const checkKey = (e) => {
 	} else return undefined;
 };
 
-const checkIfStepExists = (nextSnake) => {
+const checkIfStepExists = (nextSnake: any) => {
 	const head = nextSnake.points.slice(-1)[0];
 	return !(
 		head.x < 0 ||
@@ -101,28 +104,65 @@ const checkIfStepExists = (nextSnake) => {
 	);
 };
 
-const drawSnake = (newSnake) => {
-	const selected = document.querySelectorAll(".selected");
+const drawSnake = (newSnake: any) => {
+	const selected = document.querySelectorAll(".snake-body");
 	for (let item of selected) item.removeAttribute("class"); //  remove current snake
 
 	const newSelectedIds = [];
 	for (const item of newSnake.points)
 		newSelectedIds.push(`${item.x} ${item.y}`);
 
-	for (let i = 0; i < newSelectedIds.length; i++)
-		document
-			.getElementById(newSelectedIds[i])
-			.setAttribute(
-				"class",
-				`selected ${i === newSelectedIds.length - 1 ? "head" : ""}`
-			);
+	for (let i = 0; i < newSelectedIds.length; i++) {
+		let obj = document.getElementById(newSelectedIds[i]);
+
+		obj?.setAttribute(
+			"class",
+			`snake-body ${i === newSelectedIds.length - 1 ? "snake-head" : ""}`
+		);
+	}
 };
 
-const walk = (e) => {
-	const newSnake = checkKey(e);
-	if (!newSnake) return; // don't do anything if other keys are pressed
+const changeDirection = (e: KeyboardEvent) => {
+	if (checkIfOppositeDirectionInput(e.key)) return undefined;
+	switch (e.key) {
+		case "ArrowRight":
+			snake.direction = "right";
+			break;
+		case "ArrowLeft":
+			snake.direction = "left";
+			break;
+		case "ArrowUp":
+			snake.direction = "up";
+			break;
+		case "ArrowDown":
+			snake.direction = "down";
+			break;
+	}
+};
+
+const autoWalk = () => {
+	let key: string = "";
+	switch (snake.direction) {
+		case "right":
+			key = "ArrowRight";
+			break;
+		case "left":
+			key = "ArrowLeft";
+			break;
+		case "down":
+			key = "ArrowDown";
+			break;
+		case "up":
+			key = "ArrowUp";
+			break;
+	}
+	const newSnake = checkKey(key);
+	if (!newSnake) return;
 	snake = newSnake;
 	drawSnake(snake);
 };
 
-window.addEventListener("keydown", walk);
+drawInitialMap();
+
+window.addEventListener("keydown", changeDirection);
+setInterval(autoWalk, 500);
