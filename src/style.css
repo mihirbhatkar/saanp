@@ -11,24 +11,24 @@ body {
 	width: ;
 	display: grid;
 	align-items: center;
-	grid-template-columns: repeat(12, auto);
-	grid-template-rows: repeat(12, auto);
+	grid-template-columns: repeat(24, auto);
+	grid-template-rows: repeat(24, auto);
 	/* padding: 1rem; */
 }
 
 .container > div {
 	background-color: rgb(228, 255, 228);
-	width: 52px;
-	height: 52px;
+	width: 1.5rem;
+	height: 1.5rem;
 	box-sizing: border-box;
 }
 
 .snake-body {
 	background-color: greenyellow !important;
-	border-radius: 8px;
+	/* border-radius: 2px; */
 }
 
 .snake-head {
 	background-color: red !important;
-	border-radius: 8px;
+	/* border-radius: 8px; */
 }

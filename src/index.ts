@@ -1,12 +1,13 @@
 import "./style.css";
 import { drawInitialMap } from "./modules/mapGenerator";
 
-export const side = 12;
+export const side = 24;
 
 export const startPoints: SnakePoints = [
-	{ x: 0, y: 0 },
-	{ x: 1, y: 0 },
-	{ x: 2, y: 0, head: true },
+	{ x: 1, y: 10 },
+	{ x: 2, y: 10 },
+	{ x: 3, y: 10 },
+	{ x: 4, y: 10, head: true },
 ]; // array points are going to be continous and in a straight horizontal line.
 
 let snake: Snake = {
@@ -166,4 +167,4 @@ const autoWalk = () => {
 drawInitialMap();
 
 window.addEventListener("keydown", changeDirection);
-setInterval(autoWalk, 500);
+setInterval(autoWalk, 200);
