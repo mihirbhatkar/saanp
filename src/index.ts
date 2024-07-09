@@ -82,8 +82,13 @@ const changeDirection = (e: KeyboardEvent) => {
 	)
 		return;
 
+	if (keysDirectionMap[e.key] === snake.direction) return;
+
 	if (!checkIfOppositeDirectionInput(keysDirectionMap[e.key])) {
 		snake.direction = keysDirectionMap[e.key];
+		clearInterval(walkIntervalId);
+		walkIntervalId = setInterval(autoWalk, 200);
+		autoWalk();
 	}
 };
 
@@ -106,4 +111,4 @@ const autoWalk = () => {
 drawInitialMap();
 
 window.addEventListener("keydown", changeDirection);
-const walkIntervalId = setInterval(autoWalk, 150);
+let walkIntervalId = setInterval(autoWalk, 200);
