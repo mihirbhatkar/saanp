@@ -13,8 +13,9 @@ export const startPoints: SnakePoints = [
 
 export const snake: Snake = {
 	points: startPoints,
-	length: 3,
+	length: 4,
 	direction: "down",
+	alive: true,
 };
 
 const keysDirectionMap: any = {
@@ -25,29 +26,6 @@ const keysDirectionMap: any = {
 };
 
 // !
-const newPoints = (points: SnakePoints, direction: string) => {
-	const newPoints = structuredClone(points);
-	let newHead = newPoints.slice(-1)[0];
-
-	let newX = newHead.x;
-	let newY = newHead.y;
-	switch (direction) {
-		case "right":
-			newPoints.push({ x: ++newX, y: newY });
-			break;
-		case "left":
-			newPoints.push({ x: --newX, y: newY });
-			break;
-		case "up":
-			newPoints.push({ x: newX, y: --newY });
-			break;
-		case "down":
-			newPoints.push({ x: newX, y: ++newY });
-			break;
-	}
-	newPoints.shift();
-	return newPoints;
-};
 
 const checkIfOppositeDirectionInput = (direction: string) => {
 	switch (direction) {
@@ -62,41 +40,70 @@ const checkIfOppositeDirectionInput = (direction: string) => {
 	}
 };
 
-const moveSnake = (direction: string) => {
-	if (checkIfOppositeDirectionInput(direction)) return undefined;
+const moveSnake = () => {
+	if (checkIfOppositeDirectionInput(snake.direction)) return undefined;
 
-	const pointsOld = snake.points;
-	snake.points = newPoints(pointsOld, direction);
-	snake.direction = direction;
+	delete snake.points[snake.length - 1].head;
+	let newHead = snake.points.slice(-1)[0];
+	let newX = newHead.x;
+	let newY = newHead.y;
+	switch (snake.direction) {
+		case "right":
+			snake.points.push({ x: ++newX, y: newY, head: true });
+			break;
+		case "left":
+			snake.points.push({ x: --newX, y: newY, head: true });
+			break;
+		case "up":
+			snake.points.push({ x: newX, y: --newY, head: true });
+			break;
+		case "down":
+			snake.points.push({ x: newX, y: ++newY, head: true });
+			break;
+	}
+	snake.points.shift();
 
-	if (checkIfStepExists(snake)) {
-		return snake;
-	} else return undefined;
+	checkIfStepExists();
 };
 
-const checkIfStepExists = (nextSnake: any) => {
-	const head = nextSnake.points.slice(-1)[0];
-	return !(
-		head.x < 0 ||
-		head.y < 0 ||
-		head.x > side - 1 ||
-		head.y > side - 1
-	);
+const checkIfStepExists = () => {
+	const head = snake.points.slice(-1)[0];
+	if (head.x < 0 || head.y < 0 || head.x > side - 1 || head.y > side - 1) {
+		snake.alive = false;
+	}
 };
 
 const changeDirection = (e: KeyboardEvent) => {
-	if (checkIfOppositeDirectionInput(keysDirectionMap[e.key]))
-		return undefined;
-	snake.direction = keysDirectionMap[e.key];
+	if (
+		e.key !== "ArrowRight" &&
+		e.key !== "ArrowLeft" &&
+		e.key !== "ArrowUp" &&
+		e.key !== "ArrowDown"
+	)
+		return;
+
+	if (!checkIfOppositeDirectionInput(keysDirectionMap[e.key])) {
+		snake.direction = keysDirectionMap[e.key];
+	}
 };
 
 const autoWalk = () => {
-	const newSnake = moveSnake(snake.direction);
-	if (!newSnake) return;
-	drawSnake();
+	moveSnake();
+
+	if (!snake.alive) {
+		// fail state
+		let score = document.getElementById("score");
+		if (score) {
+			score.innerText = "Dead 💀";
+		}
+		clearInterval(walkIntervalId);
+		window.removeEventListener("keydown", changeDirection);
+	} else {
+		drawSnake();
+	}
 };
 
 drawInitialMap();
 
 window.addEventListener("keydown", changeDirection);
-setInterval(autoWalk, 200);
+const walkIntervalId = setInterval(autoWalk, 150);
