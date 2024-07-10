@@ -1,12 +1,14 @@
 import "./style.css";
 import { drawInitialMap } from "./modules/mapGenerator";
-import { changeDirection } from "./modules/snakeMovement";
+import { keyPressHandler, moveSnake } from "./modules/snakeMovement";
+import { drawSnake } from "./modules/drawSnake";
 
-console.log("Hi from index");
+export const state = {
+	score: 0,
+	status: "playing",
+};
 
 export const side = 24;
-
-export const score = 0;
 
 export const startPoints: SnakePoints = [
 	{ x: 1, y: 10 },
@@ -22,6 +24,24 @@ export const snake: Snake = {
 	alive: true,
 };
 
-drawInitialMap();
+export const setWalkIntervalId = (id: number) => {
+	walkIntervalId = id;
+};
 
-window.addEventListener("keydown", changeDirection);
+export const renderGame = () => {
+	moveSnake();
+	if (!snake.alive) {
+		let score = document.getElementById("score");
+		if (score) {
+			score.innerText = `Dead 💀   Score - ${state.score}`;
+		}
+		window.clearInterval(walkIntervalId);
+	} else {
+		drawSnake();
+	}
+};
+
+drawInitialMap();
+export let walkIntervalId: number;
+setWalkIntervalId(window.setInterval(renderGame, 200));
+window.addEventListener("keydown", keyPressHandler);

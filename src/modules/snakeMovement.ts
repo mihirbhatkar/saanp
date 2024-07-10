@@ -1,26 +1,13 @@
-import { snake, side } from "..";
-import { drawSnake } from "./drawSnake";
+import { snake, side, state } from "..";
+import { renderGame } from "..";
+import { walkIntervalId, setWalkIntervalId } from "..";
+import { resetGame } from "./gameStates";
 
 const keysDirectionMap: any = {
 	ArrowDown: "down",
 	ArrowUp: "up",
 	ArrowLeft: "left",
 	ArrowRight: "right",
-};
-
-const autoWalk = () => {
-	moveSnake();
-	if (!snake.alive) {
-		// fail state
-		let score = document.getElementById("score");
-		if (score) {
-			score.innerText = "Dead 💀";
-		}
-		clearInterval(walkIntervalId);
-		window.removeEventListener("keydown", changeDirection);
-	} else {
-		drawSnake();
-	}
 };
 
 const moveSnake = () => {
@@ -62,22 +49,28 @@ const checkIfOppositeDirectionInput = (direction: string) => {
 	}
 };
 
-const changeDirection = (e: KeyboardEvent) => {
+const keyPressHandler = (e: KeyboardEvent): void => {
+	const keyPressed = e.code;
+
+	if (snake.alive == false && keyPressed === "Space") {
+		resetGame();
+	}
+
 	if (
-		e.key !== "ArrowRight" &&
-		e.key !== "ArrowLeft" &&
-		e.key !== "ArrowUp" &&
-		e.key !== "ArrowDown"
+		keyPressed !== "ArrowRight" &&
+		keyPressed !== "ArrowLeft" &&
+		keyPressed !== "ArrowUp" &&
+		keyPressed !== "ArrowDown"
 	)
 		return;
 
-	if (keysDirectionMap[e.key] === snake.direction) return; // for handling long key presses
+	if (keysDirectionMap[keyPressed] === snake.direction) return; // for handling long key presses
 
-	if (!checkIfOppositeDirectionInput(keysDirectionMap[e.key])) {
-		snake.direction = keysDirectionMap[e.key];
-		clearInterval(walkIntervalId);
-		walkIntervalId = setInterval(autoWalk, 200);
-		autoWalk();
+	if (!checkIfOppositeDirectionInput(keysDirectionMap[keyPressed])) {
+		snake.direction = keysDirectionMap[keyPressed];
+		window.clearInterval(walkIntervalId);
+		setWalkIntervalId(window.setInterval(renderGame, 200));
+		renderGame();
 	}
 };
 
@@ -88,8 +81,4 @@ const checkIfStepExists = () => {
 	}
 };
 
-console.log("Hi from snakeMovement");
-
-let walkIntervalId = setInterval(autoWalk, 200);
-
-export { changeDirection };
+export { keyPressHandler, moveSnake };
