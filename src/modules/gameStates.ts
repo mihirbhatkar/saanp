@@ -1,4 +1,4 @@
-import { renderGame, state, snake, startPoints, setWalkIntervalId } from "..";
+import { renderGame, state, snake } from "..";
 
 export const resetGame = () => {
 	let score = document.getElementById("score");
@@ -9,18 +9,12 @@ export const resetGame = () => {
 	state.score = 0;
 	state.status = "playing";
 
-	snake.points = [
-		{ x: 1, y: 10 },
-		{ x: 2, y: 10 },
-		{ x: 3, y: 10 },
-		{ x: 4, y: 10, head: true },
-	];
-	snake.length = 4;
-	snake.direction = "down";
+	snake.breakpoints = [];
+	snake.tail = { x: 16, y: 16, direction: "right" };
+	snake.head = { x: 16 + 8 * 16, y: 16, direction: "right" };
 	snake.alive = true;
 
-	const id = window.setInterval(renderGame, 200);
-	setWalkIntervalId(id);
+	window.requestAnimationFrame(renderGame);
 };
 
 export const setMenu = () => {};

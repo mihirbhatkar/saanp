@@ -11,16 +11,16 @@ const keysDirectionMap: any = {
 const incrementTowardsDirection = (obj: SnakePoint): void => {
 	switch (obj.direction) {
 		case "right":
-			obj.x++;
+			obj.x += 1;
 			break;
 		case "left":
-			obj.x--;
+			obj.x -= 1;
 			break;
 		case "up":
-			obj.y--;
+			obj.y -= 1;
 			break;
 		case "down":
-			obj.y++;
+			obj.y += 1;
 			break;
 	}
 };

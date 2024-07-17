@@ -15,7 +15,7 @@ export const side = 8; // side of a unit area
 
 export const snake: Snake = {
 	tail: { x: 16, y: 16, direction: "right" },
-	head: { x: 16 + 8 * 8, y: 16, direction: "right" },
+	head: { x: 16 + 8 * 16, y: 16, direction: "right" },
 	breakpoints: [],
 	alive: true,
 };
