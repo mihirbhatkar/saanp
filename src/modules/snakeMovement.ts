@@ -1,4 +1,4 @@
-import { snake, side, state } from "..";
+import { snake, side, state, lengthOfMap, breadthOfMap } from "..";
 import { renderGame } from "..";
 import { walkIntervalId, setWalkIntervalId } from "..";
 import { resetGame } from "./gameStates";
@@ -11,12 +11,14 @@ const keysDirectionMap: any = {
 };
 
 const moveSnake = () => {
-	if (checkIfOppositeDirectionInput(snake.direction)) return undefined;
-
-	delete snake.points[snake.length - 1].head;
-	let newHead = snake.points.slice(-1)[0];
+	// for (let point of snake.points) {
+	// 	point.x++;
+	// }
+	delete snake.points[snake.points.length - 1].head;
+	let newHead = snake.points[snake.points.length - 1];
 	let newX = newHead.x;
 	let newY = newHead.y;
+
 	switch (snake.direction) {
 		case "right":
 			snake.points.push({ x: ++newX, y: newY, head: true });
@@ -31,7 +33,15 @@ const moveSnake = () => {
 			snake.points.push({ x: newX, y: ++newY, head: true });
 			break;
 	}
-	snake.points.shift();
+
+	// unless the tail catches up to the breakpoint, don't remove the breakpoint from the snake.points
+	// every breakpoint and unique point should have a direction parameter
+	let tail = snake.points[0];
+	let nextBreakpoint = snake.points[1];
+	if (tail.x == nextBreakpoint.x && tail.y == nextBreakpoint.y) {
+		// remove the breakpoint
+		snake.points.splice(1, 1);
+	}
 
 	checkIfStepExists();
 };
@@ -68,15 +78,18 @@ const keyPressHandler = (e: KeyboardEvent): void => {
 
 	if (!checkIfOppositeDirectionInput(keysDirectionMap[keyPressed])) {
 		snake.direction = keysDirectionMap[keyPressed];
-		window.clearInterval(walkIntervalId);
-		setWalkIntervalId(window.setInterval(renderGame, 200));
-		renderGame();
 	}
 };
 
 const checkIfStepExists = () => {
-	const head = snake.points.slice(-1)[0];
-	if (head.x < 0 || head.y < 0 || head.x > side - 1 || head.y > side - 1) {
+	const head = snake.points[snake.points.length - 1];
+
+	if (
+		head.x < side ||
+		head.y < side ||
+		head.x > lengthOfMap - side ||
+		head.y > breadthOfMap - side
+	) {
 		snake.alive = false;
 	}
 };

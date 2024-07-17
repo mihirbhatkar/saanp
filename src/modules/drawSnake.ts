@@ -1,17 +1,28 @@
-import { snake } from "..";
+import { breadthOfMap, lengthOfMap, snake } from "..";
+
+const canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
+const ctx = canvas?.getContext("2d");
 
 export const drawSnake = () => {
-	const selected = document.querySelectorAll(".snake-body");
-	for (let item of selected) item.removeAttribute("class"); //  remove current snake
+	if (ctx) {
+		// ctx.clearRect(0, 0, lengthOfMap, breadthOfMap);
 
-	// const newSelectedIds = [];
-	// for (const item of snake.points) newSelectedIds.push(`${item.x} ${item.y}`);
+		ctx.fillStyle = "lightgreen";
+		ctx.fillRect(0, 0, lengthOfMap, breadthOfMap);
 
-	for (const item of snake.points) {
-		let obj = document.getElementById(`${item.x} ${item.y}`);
-		obj?.setAttribute(
-			"class",
-			`snake-body ${item.head == true && "snake-head"}`
-		);
+		// drawing the snake
+		ctx.beginPath();
+		ctx.lineWidth = 8;
+
+		for (let i = 0; i < snake.points.length; i++) {
+			const point = snake.points[i];
+			if (i === 0) {
+				ctx.moveTo(point.x, point.y);
+			} else {
+				ctx.lineTo(point.x, point.y);
+			}
+		}
+
+		ctx.stroke();
 	}
 };

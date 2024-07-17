@@ -1,7 +1,28 @@
-import { side, startPoints } from "../index";
+import { breadthOfMap, lengthOfMap, side, snake, startPoints } from "../index";
+
+const canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
+const ctx = canvas?.getContext("2d");
 
 export const drawInitialMap = () => {
-	let container = document?.getElementById("map");
+	if (ctx) {
+		ctx.fillStyle = "lightgreen";
+		ctx.fillRect(0, 0, lengthOfMap, breadthOfMap);
+
+		// drawing the snake
+		ctx.beginPath();
+		ctx.lineWidth = 8;
+
+		for (let i = 0; i < snake.points.length; i++) {
+			const point = snake.points[i];
+			if (i === 0) {
+				ctx.moveTo(point.x, point.y);
+			} else {
+				ctx.lineTo(point.x, point.y);
+			}
+		}
+
+		ctx.stroke();
+	}
 
 	// start points are in a straight horizontal line
 	// this will find the range of x for that y in which the initial snake exists
@@ -12,19 +33,4 @@ export const drawInitialMap = () => {
 		if (item.head) snakeHeadXValue = item.x;
 		return item.x;
 	});
-
-	for (let i = 0; i < side; i++) {
-		for (let j = 0; j < side; j++) {
-			let block = document.createElement("div");
-			block.setAttribute("id", `${j} ${i}`); // keep in mind j denotes x and i denotes y
-
-			// this part if for drawing the snake
-			if (i === initialY && intialRangeOfX.indexOf(j) !== -1) {
-				block.classList.add("snake-body");
-				if (j === snakeHeadXValue) block.classList.add("snake-head");
-			}
-
-			container?.appendChild(block);
-		}
-	}
 };

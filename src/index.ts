@@ -8,19 +8,20 @@ export const state = {
 	status: "playing",
 };
 
-export const side = 24;
+export const lengthOfMap = 640;
+export const breadthOfMap = 320;
+
+export const side = 8; // side of a unit area
 
 export const startPoints: SnakePoints = [
-	{ x: 1, y: 10 },
-	{ x: 2, y: 10 },
-	{ x: 3, y: 10 },
-	{ x: 4, y: 10, head: true },
+	{ x: 16, y: 16 },
+	{ x: 16 + 8 * 4, y: 16, head: true },
 ]; // array points are going to be continous and in a straight horizontal line.
 
 export const snake: Snake = {
 	points: startPoints,
 	length: 4,
-	direction: "down",
+	direction: "right",
 	alive: true,
 };
 
@@ -35,13 +36,14 @@ export const renderGame = () => {
 		if (score) {
 			score.innerText = `Dead 💀   Score - ${state.score}`;
 		}
-		window.clearInterval(walkIntervalId);
 	} else {
 		drawSnake();
+		window.requestAnimationFrame(renderGame);
 	}
 };
 
 drawInitialMap();
 export let walkIntervalId: number;
-setWalkIntervalId(window.setInterval(renderGame, 200));
+// setWalkIntervalId(window.setInterval(renderGame, 200));
+window.requestAnimationFrame(renderGame);
 window.addEventListener("keydown", keyPressHandler);
