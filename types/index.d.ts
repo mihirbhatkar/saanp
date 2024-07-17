@@ -1,8 +1,8 @@
 type Snake = {
-	points: SnakePoints;
-	length: number;
-	direction: string;
+	head: SnakePoint;
+	tail: SnakePoint;
+	breakpoints: SnakePoint[];
 	alive: boolean;
 };
 
-type SnakePoints = { x: number; y: number; head?: boolean }[];
+type SnakePoint = { x: number; y: number; direction: string };

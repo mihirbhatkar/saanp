@@ -1,4 +1,4 @@
-import { breadthOfMap, lengthOfMap, side, snake, startPoints } from "../index";
+import { breadthOfMap, lengthOfMap, snake } from "../index";
 
 const canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
 const ctx = canvas?.getContext("2d");
@@ -12,25 +12,9 @@ export const drawInitialMap = () => {
 		ctx.beginPath();
 		ctx.lineWidth = 8;
 
-		for (let i = 0; i < snake.points.length; i++) {
-			const point = snake.points[i];
-			if (i === 0) {
-				ctx.moveTo(point.x, point.y);
-			} else {
-				ctx.lineTo(point.x, point.y);
-			}
-		}
+		ctx.moveTo(snake.tail.x, snake.tail.y);
+		ctx.lineTo(snake.head.x, snake.head.y);
 
 		ctx.stroke();
 	}
-
-	// start points are in a straight horizontal line
-	// this will find the range of x for that y in which the initial snake exists
-	// these variables are for drawing the snake
-	let initialY: number = startPoints[0].y; // !could change, need improvements later
-	let snakeHeadXValue: number = 0;
-	let intialRangeOfX: number[] = startPoints.map((item) => {
-		if (item.head) snakeHeadXValue = item.x;
-		return item.x;
-	});
 };

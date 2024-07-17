@@ -1,6 +1,4 @@
 import { snake, side, state, lengthOfMap, breadthOfMap } from "..";
-import { renderGame } from "..";
-import { walkIntervalId, setWalkIntervalId } from "..";
 import { resetGame } from "./gameStates";
 
 const keysDirectionMap: any = {
@@ -10,38 +8,41 @@ const keysDirectionMap: any = {
 	ArrowRight: "right",
 };
 
-const moveSnake = () => {
-	// for (let point of snake.points) {
-	// 	point.x++;
-	// }
-	delete snake.points[snake.points.length - 1].head;
-	let newHead = snake.points[snake.points.length - 1];
-	let newX = newHead.x;
-	let newY = newHead.y;
-
-	switch (snake.direction) {
+const incrementTowardsDirection = (obj: SnakePoint): void => {
+	switch (obj.direction) {
 		case "right":
-			snake.points.push({ x: ++newX, y: newY, head: true });
+			obj.x++;
 			break;
 		case "left":
-			snake.points.push({ x: --newX, y: newY, head: true });
+			obj.x--;
 			break;
 		case "up":
-			snake.points.push({ x: newX, y: --newY, head: true });
+			obj.y--;
 			break;
 		case "down":
-			snake.points.push({ x: newX, y: ++newY, head: true });
+			obj.y++;
 			break;
 	}
+};
 
+const moveSnake = () => {
+	const head = snake.head;
+	incrementTowardsDirection(head);
 	// unless the tail catches up to the breakpoint, don't remove the breakpoint from the snake.points
 	// every breakpoint and unique point should have a direction parameter
-	let tail = snake.points[0];
-	let nextBreakpoint = snake.points[1];
-	if (tail.x == nextBreakpoint.x && tail.y == nextBreakpoint.y) {
-		// remove the breakpoint
-		snake.points.splice(1, 1);
+
+	let tail = snake.tail;
+	if (snake.breakpoints.length != 0) {
+		let nextBreakpoint = snake.breakpoints[0];
+		if (tail.x === nextBreakpoint.x && tail.y === nextBreakpoint.y) {
+			// remove the breakpoint
+			tail.direction = nextBreakpoint.direction;
+			snake.breakpoints.shift();
+		}
 	}
+	incrementTowardsDirection(tail);
+
+	// increment other points in direction of the next breakpoint
 
 	checkIfStepExists();
 };
@@ -49,13 +50,13 @@ const moveSnake = () => {
 const checkIfOppositeDirectionInput = (direction: string) => {
 	switch (direction) {
 		case "right":
-			return snake.direction === "left";
+			return snake.head.direction === "left";
 		case "left":
-			return snake.direction === "right";
+			return snake.head.direction === "right";
 		case "up":
-			return snake.direction === "down";
+			return snake.head.direction === "down";
 		case "down":
-			return snake.direction === "up";
+			return snake.head.direction === "up";
 	}
 };
 
@@ -74,15 +75,18 @@ const keyPressHandler = (e: KeyboardEvent): void => {
 	)
 		return;
 
-	if (keysDirectionMap[keyPressed] === snake.direction) return; // for handling long key presses
+	const dir = keysDirectionMap[keyPressed];
 
-	if (!checkIfOppositeDirectionInput(keysDirectionMap[keyPressed])) {
-		snake.direction = keysDirectionMap[keyPressed];
+	if (dir === snake.head.direction) return; // for handling long key presses
+
+	if (!checkIfOppositeDirectionInput(dir)) {
+		snake.head.direction = dir;
+		snake.breakpoints.push({ ...snake.head });
 	}
 };
 
 const checkIfStepExists = () => {
-	const head = snake.points[snake.points.length - 1];
+	const head = snake.head;
 
 	if (
 		head.x < side ||

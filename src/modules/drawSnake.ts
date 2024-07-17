@@ -14,14 +14,14 @@ export const drawSnake = () => {
 		ctx.beginPath();
 		ctx.lineWidth = 8;
 
-		for (let i = 0; i < snake.points.length; i++) {
-			const point = snake.points[i];
-			if (i === 0) {
-				ctx.moveTo(point.x, point.y);
-			} else {
-				ctx.lineTo(point.x, point.y);
-			}
+		ctx.moveTo(snake.tail.x, snake.tail.y);
+
+		for (let i = 0; i < snake.breakpoints.length; i++) {
+			const point = snake.breakpoints[i];
+			ctx.lineTo(point.x, point.y);
 		}
+
+		ctx.lineTo(snake.head.x, snake.head.y);
 
 		ctx.stroke();
 	}

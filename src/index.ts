@@ -13,20 +13,11 @@ export const breadthOfMap = 320;
 
 export const side = 8; // side of a unit area
 
-export const startPoints: SnakePoints = [
-	{ x: 16, y: 16 },
-	{ x: 16 + 8 * 4, y: 16, head: true },
-]; // array points are going to be continous and in a straight horizontal line.
-
 export const snake: Snake = {
-	points: startPoints,
-	length: 4,
-	direction: "right",
+	tail: { x: 16, y: 16, direction: "right" },
+	head: { x: 16 + 8 * 8, y: 16, direction: "right" },
+	breakpoints: [],
 	alive: true,
-};
-
-export const setWalkIntervalId = (id: number) => {
-	walkIntervalId = id;
 };
 
 export const renderGame = () => {
@@ -43,7 +34,5 @@ export const renderGame = () => {
 };
 
 drawInitialMap();
-export let walkIntervalId: number;
-// setWalkIntervalId(window.setInterval(renderGame, 200));
 window.requestAnimationFrame(renderGame);
 window.addEventListener("keydown", keyPressHandler);
