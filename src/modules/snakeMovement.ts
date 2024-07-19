@@ -11,33 +11,62 @@ const keysDirectionMap: any = {
 const incrementTowardsDirection = (obj: SnakePoint): void => {
 	switch (obj.direction) {
 		case "right":
-			obj.x += 1;
+			obj.x += 1.5;
 			break;
 		case "left":
-			obj.x -= 1;
+			obj.x -= 1.5;
 			break;
 		case "up":
-			obj.y -= 1;
+			obj.y -= 1.5;
 			break;
 		case "down":
-			obj.y += 1;
+			obj.y += 1.5;
 			break;
 	}
 };
 
 const moveSnake = () => {
+	// console.log(snake.breakpoints);
+
 	const head = snake.head;
 	incrementTowardsDirection(head);
 	// unless the tail catches up to the breakpoint, don't remove the breakpoint from the snake.points
 	// every breakpoint and unique point should have a direction parameter
 
 	let tail = snake.tail;
-	if (snake.breakpoints.length != 0) {
+	if (snake.breakpoints.length > 0) {
 		let nextBreakpoint = snake.breakpoints[0];
-		if (tail.x === nextBreakpoint.x && tail.y === nextBreakpoint.y) {
-			// remove the breakpoint
-			tail.direction = nextBreakpoint.direction;
-			snake.breakpoints.shift();
+
+		// logic for removing the breakpoint
+		switch (tail.direction) {
+			case "right": {
+				if (tail.x >= nextBreakpoint.x) {
+					tail.direction = nextBreakpoint.direction;
+					snake.breakpoints.shift();
+				}
+				break;
+			}
+			case "left": {
+				if (tail.x <= nextBreakpoint.x) {
+					tail.direction = nextBreakpoint.direction;
+					snake.breakpoints.shift();
+				}
+				break;
+			}
+			case "up": {
+				if (tail.y <= nextBreakpoint.y) {
+					tail.direction = nextBreakpoint.direction;
+					snake.breakpoints.shift();
+				}
+				break;
+			}
+			case "down": {
+				if (tail.y >= nextBreakpoint.y) {
+					tail.direction = nextBreakpoint.direction;
+					snake.breakpoints.shift();
+				}
+				break;
+			}
 		}
 	}
 	incrementTowardsDirection(tail);
@@ -60,6 +89,10 @@ const checkIfOppositeDirectionInput = (direction: string) => {
 	}
 };
 
+const euclideanDistance = (a: SnakePoint, b: SnakePoint): number => {
+	return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+};
+
 const keyPressHandler = (e: KeyboardEvent): void => {
 	const keyPressed = e.code;
 
@@ -78,6 +111,16 @@ const keyPressHandler = (e: KeyboardEvent): void => {
 	const dir = keysDirectionMap[keyPressed];
 
 	if (dir === snake.head.direction) return; // for handling long key presses
+
+	if (
+		snake.breakpoints.length > 0 &&
+		euclideanDistance(
+			snake.head,
+			snake.breakpoints[snake.breakpoints.length - 1]
+		) < side
+	) {
+		return;
+	}
 
 	if (!checkIfOppositeDirectionInput(dir)) {
 		snake.head.direction = dir;

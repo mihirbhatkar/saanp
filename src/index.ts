@@ -8,10 +8,10 @@ export const state = {
 	status: "playing",
 };
 
-export const lengthOfMap = 640;
-export const breadthOfMap = 320;
+export const lengthOfMap = 800;
+export const breadthOfMap = 600;
 
-export const side = 8; // side of a unit area
+export const side = 10; // side of a unit area
 
 export const snake: Snake = {
 	tail: { x: 16, y: 16, direction: "right" },
