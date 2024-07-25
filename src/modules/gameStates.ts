@@ -9,9 +9,11 @@ export const resetGame = () => {
 	state.score = 0;
 	state.status = "playing";
 
-	snake.breakpoints = [];
-	snake.tail = { x: 16, y: 16, direction: "right" };
-	snake.head = { x: 16 + 8 * 16, y: 16, direction: "right" };
+	snake.points = [
+		{ x: 1, y: 1, direction: "right" }, // tail
+		{ x: 2, y: 1, direction: "right" },
+		{ x: 3, y: 1, direction: "right" }, // head
+	];
 	snake.alive = true;
 
 	window.requestAnimationFrame(renderGame);

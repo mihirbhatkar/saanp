@@ -1,35 +1,47 @@
 import "./style.css";
 import { drawInitialMap } from "./modules/mapGenerator";
-import { keyPressHandler, moveSnake } from "./modules/snakeMovement";
-import { drawSnake } from "./modules/drawSnake";
+import { keyPressHandler, compute } from "./modules/snakeMovement";
+import { drawMap } from "./modules/drawSnake";
 
 export const state = {
 	score: 0,
 	status: "playing",
 };
 
-export const lengthOfMap = 800;
-export const breadthOfMap = 600;
-
-export const side = 10; // side of a unit area
+export const lengthOfMap = 8;
+export const breadthOfMap = 6;
 
 export const snake: Snake = {
-	tail: { x: 16, y: 16, direction: "right" },
-	head: { x: 16 + 8 * 16, y: 16, direction: "right" },
-	breakpoints: [],
+	points: [
+		{ x: 1, y: 2, direction: "right" }, // tail
+		{ x: 2, y: 2, direction: "right" },
+		{ x: 3, y: 2, direction: "right" }, // head
+	],
 	alive: true,
 };
 
-export const renderGame = () => {
-	moveSnake();
-	if (!snake.alive) {
+let previousTimeStamp: any = undefined;
+
+export const renderGame = (timeStamp: number) => {
+	if (!previousTimeStamp) {
+		previousTimeStamp = timeStamp;
+	}
+	let elapsed = timeStamp - previousTimeStamp;
+
+	if (elapsed >= 1000) {
+		compute();
+		previousTimeStamp = timeStamp;
+		elapsed = 0;
+	}
+
+	if (snake.alive) {
+		drawMap(Math.min(elapsed / 10, 99));
+		window.requestAnimationFrame(renderGame);
+	} else {
 		let score = document.getElementById("score");
 		if (score) {
 			score.innerText = `Dead 💀   Score - ${state.score}`;
 		}
-	} else {
-		drawSnake();
-		window.requestAnimationFrame(renderGame);
 	}
 };
 

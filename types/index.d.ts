@@ -1,7 +1,5 @@
 type Snake = {
-	head: SnakePoint;
-	tail: SnakePoint;
-	breakpoints: SnakePoint[];
+	points: SnakePoint[];
 	alive: boolean;
 };
 
