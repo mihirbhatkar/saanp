@@ -13,7 +13,8 @@ export const breadthOfMap = 6;
 
 export const snake: Snake = {
 	points: [
-		{ x: 1, y: 2, direction: "right" }, // tail
+		{ x: 0, y: 2, direction: "right" }, // tail
+		{ x: 1, y: 2, direction: "right" },
 		{ x: 2, y: 2, direction: "right" },
 		{ x: 3, y: 2, direction: "right" }, // head
 	],
@@ -28,14 +29,16 @@ export const renderGame = (timeStamp: number) => {
 	}
 	let elapsed = timeStamp - previousTimeStamp;
 
-	if (elapsed >= 1000) {
+	const interval = 500;
+
+	if (elapsed >= interval) {
 		compute();
 		previousTimeStamp = timeStamp;
 		elapsed = 0;
 	}
 
 	if (snake.alive) {
-		drawMap(Math.min(elapsed / 10, 99));
+		drawMap(elapsed / (interval / 100));
 		window.requestAnimationFrame(renderGame);
 	} else {
 		let score = document.getElementById("score");

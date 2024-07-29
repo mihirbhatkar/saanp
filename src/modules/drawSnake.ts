@@ -2,12 +2,11 @@ import { breadthOfMap, lengthOfMap, snake } from "..";
 
 const canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
 const ctx = canvas?.getContext("2d");
-const snakeWidth = 50;
+const snakeWidth = 25;
 
 export const drawMap = (offset: number) => {
 	if (ctx) {
 		ctx.clearRect(0, 0, lengthOfMap, breadthOfMap);
-
 		ctx.fillStyle = "lightgreen";
 		ctx.fillRect(0, 0, lengthOfMap * 100, breadthOfMap * 100);
 
@@ -17,7 +16,20 @@ export const drawMap = (offset: number) => {
 		ctx.strokeStyle = "black";
 		for (let i = 0; i < snake.points.length; i++) {
 			const point = snake.points[i];
-			ctx.lineTo(point.x * 100 + offset, point.y * 100);
+			switch (point.direction) {
+				case "right":
+					ctx.lineTo(point.x * 100 + offset, point.y * 100);
+					break;
+				case "left":
+					ctx.lineTo(point.x * 100 - offset, point.y * 100);
+					break;
+				case "down":
+					ctx.lineTo(point.x * 100, point.y * 100 + offset);
+					break;
+				case "up":
+					ctx.lineTo(point.x * 100, point.y * 100 - offset);
+					break;
+			}
 		}
 		ctx.stroke();
 

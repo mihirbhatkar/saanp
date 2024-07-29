@@ -8,7 +8,7 @@ const keysDirectionMap: any = {
 	ArrowRight: "right",
 };
 
-export const incrementTowardsDirection = (obj: SnakePoint): void => {
+const incrementTowardsDirection = (obj: SnakePoint): void => {
 	switch (obj.direction) {
 		case "right":
 			obj.x += 1;
@@ -26,15 +26,21 @@ export const incrementTowardsDirection = (obj: SnakePoint): void => {
 };
 
 const compute = () => {
-	for (let point of snake.points) incrementTowardsDirection(point);
+	let head = snake.points.at(-1) as SnakePoint;
+	const fake = [...snake.points];
 
-	// increment other points in direction of the next breakpoint
-
+	for (let i = 0; i < snake.points.length; i++) {
+		if (i == snake.points.length - 1) incrementTowardsDirection(head);
+		else {
+			snake.points[i] = { ...fake[i + 1] };
+		}
+	}
+	//! improve this algo
 	checkIfStepExists();
 };
 
 const checkIfOppositeDirectionInput = (direction: string) => {
-	let head = snake.points[snake.points.length - 1];
+	let head = snake.points.at(-1) as SnakePoint;
 	switch (direction) {
 		case "right":
 			return head.direction === "left";
@@ -45,10 +51,6 @@ const checkIfOppositeDirectionInput = (direction: string) => {
 		case "down":
 			return head.direction === "up";
 	}
-};
-
-const euclideanDistance = (a: SnakePoint, b: SnakePoint): number => {
-	return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 };
 
 const keyPressHandler = (e: KeyboardEvent): void => {
@@ -68,7 +70,7 @@ const keyPressHandler = (e: KeyboardEvent): void => {
 
 	const dir = keysDirectionMap[keyPressed];
 
-	let head = snake.points[snake.points.length - 1];
+	let head = snake.points.at(-1) as SnakePoint;
 	if (dir === head.direction) return; // for handling long key presses
 
 	if (!checkIfOppositeDirectionInput(dir)) {
@@ -77,13 +79,13 @@ const keyPressHandler = (e: KeyboardEvent): void => {
 };
 
 const checkIfStepExists = () => {
-	const head = snake.points[snake.points.length - 1];
+	let head = snake.points.at(-1) as SnakePoint;
 
 	if (
 		head.x < 0 ||
 		head.y < 0 ||
-		head.x > lengthOfMap ||
-		head.y > breadthOfMap
+		head.x > lengthOfMap - 1 ||
+		head.y > breadthOfMap - 1
 	) {
 		snake.alive = false;
 	}
