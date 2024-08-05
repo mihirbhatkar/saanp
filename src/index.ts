@@ -4,48 +4,49 @@ import { keyPressHandler, compute } from "./modules/snakeMovement";
 import { drawMap } from "./modules/drawSnake";
 
 export const state = {
-	score: 0,
-	status: "playing",
+  score: 0,
+  status: "playing",
 };
 
 export const lengthOfMap = 8;
 export const breadthOfMap = 6;
 
 export const snake: Snake = {
-	points: [
-		{ x: 0, y: 2, direction: "right" }, // tail
-		{ x: 1, y: 2, direction: "right" },
-		{ x: 2, y: 2, direction: "right" },
-		{ x: 3, y: 2, direction: "right" }, // head
-	],
-	alive: true,
+  points: [
+    { x: 0, y: 0, direction: "right" }, // tail
+    { x: 1, y: 0, direction: "right" },
+    { x: 2, y: 0, direction: "right" },
+    { x: 3, y: 0, direction: "right" }, // head
+  ],
+  alive: true,
+  breakpoints: [],
 };
 
 let previousTimeStamp: any = undefined;
 
 export const renderGame = (timeStamp: number) => {
-	if (!previousTimeStamp) {
-		previousTimeStamp = timeStamp;
-	}
-	let elapsed = timeStamp - previousTimeStamp;
+  if (!previousTimeStamp) {
+    previousTimeStamp = timeStamp;
+  }
+  let elapsed = timeStamp - previousTimeStamp;
 
-	const interval = 500;
+  const interval = 500;
 
-	if (elapsed >= interval) {
-		compute();
-		previousTimeStamp = timeStamp;
-		elapsed = 0;
-	}
+  if (elapsed >= interval) {
+    compute();
+    previousTimeStamp = timeStamp;
+    elapsed = 0;
+  }
 
-	if (snake.alive) {
-		drawMap(elapsed / (interval / 100));
-		window.requestAnimationFrame(renderGame);
-	} else {
-		let score = document.getElementById("score");
-		if (score) {
-			score.innerText = `Dead 💀   Score - ${state.score}`;
-		}
-	}
+  if (snake.alive) {
+    drawMap(elapsed / (interval / 100));
+    window.requestAnimationFrame(renderGame);
+  } else {
+    let score = document.getElementById("score");
+    if (score) {
+      score.innerText = `Dead 💀   Score - ${state.score}`;
+    }
+  }
 };
 
 drawInitialMap();
